@@ -4,15 +4,15 @@ package socket
 //  - https://gist.github.com/hakobe/6f70d69b8c5243117787fd488ae7fbf2
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
-	"fmt"
 	"os/signal"
 	"syscall"
 
+	"github.com/docktermj/mock-server/common/help"
 	"github.com/docopt/docopt-go"
-	"github.com/docktermj/mock-server/common/help"	
 )
 
 // Read a message from the network and respond.
@@ -46,7 +46,7 @@ func Command(argv []string) {
 
 	usage := `
 Usage:
-    mock-server socket (--socket-file) [options] 
+    mock-server socket [options] 
 
 Options:
    -h, --help
@@ -58,17 +58,17 @@ Options:
 
 	args, _ := docopt.Parse(usage, nil, true, "", false)
 
-    // Test for required commandline options. 	
-	
+	// Test for required commandline options.
+
 	if args["--socket-file"] == nil {
-	    message := "Missing '--socket-file' parameter"
-	    fmt.Println(message)
-	    help.ShowHelp(usage)
-	    log.Fatalln(message)
+		message := "Missing '--socket-file' parameter"
+		fmt.Println(message)
+		help.ShowHelp(usage)
+		log.Fatalln(message)
 	}
-	
+
 	// Get commandline options.
-	
+
 	socketFile := args["--socket-file"].(string)
 	isDebug := args["--debug"].(bool)
 
