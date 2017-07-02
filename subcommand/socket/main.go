@@ -7,10 +7,12 @@ import (
 	"log"
 	"net"
 	"os"
+	"fmt"
 	"os/signal"
 	"syscall"
 
 	"github.com/docopt/docopt-go"
+	"github.com/docktermj/mock-server/common/help"	
 )
 
 // Read a message from the network and respond.
@@ -44,7 +46,7 @@ func Command(argv []string) {
 
 	usage := `
 Usage:
-    mock-server socket [options] 
+    mock-server socket (--socket-file) [options] 
 
 Options:
    -h, --help
@@ -55,10 +57,22 @@ Options:
 	// DocOpt processing.
 
 	args, _ := docopt.Parse(usage, nil, true, "", false)
+
+    // Test for required commandline options. 	
+	
+	if args["--socket-file"] == nil {
+	    message := "Missing '--socket-file' parameter"
+	    fmt.Println(message)
+	    help.ShowHelp(usage)
+	    log.Fatalln(message)
+	}
+	
+	// Get commandline options.
+	
 	socketFile := args["--socket-file"].(string)
 	isDebug := args["--debug"].(bool)
 
-	// Listen on the Unix Domain Socket
+	// Listen on the Unix Domain Socket.
 
 	if isDebug {
 		log.Printf("Starting echo server on %s", socketFile)

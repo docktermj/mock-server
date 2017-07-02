@@ -25,7 +25,7 @@ build-local:
 
 .PHONY: test-local
 test-local:
-	go test github.com/docktermj/$(PROGRAM_NAME)/... 
+	go test github.com/docktermj/$(PROGRAM_NAME)/...
 
 # -----------------------------------------------------------------------------
 # Docker-based development
