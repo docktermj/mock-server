@@ -30,11 +30,14 @@ func echoServer(networkConnection net.Conn) {
 
 		// Print what was received over the socket.
 
-		println("Server got:", string(data))
+		fmt.Println(">>>", string(data))
 
 		// Write a response to the Unix Domain Socket.
+		
+		outboundMessage := fmt.Sprintf("Server says \"%s\"", data)
+		fmt.Println("<<<", outboundMessage)
 
-		_, err = networkConnection.Write(data)
+		_, err = networkConnection.Write([]byte(outboundMessage))
 		if err != nil {
 			log.Fatal("Writing client error: ", err)
 		}
