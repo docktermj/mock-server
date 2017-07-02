@@ -1,4 +1,4 @@
-# Makefile that builds go-hello-world-plus, a "go" program.
+# Makefile that builds domain-socket-tester, a "go" program.
 
 # PROGRAM_NAME is the name of the GIT repository.
 PROGRAM_NAME := $(shell basename `git rev-parse --show-toplevel`)

@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/docktermj/go-hello-world-plus/common/runner"
-	"github.com/docktermj/go-hello-world-plus/subcommand/hellouniverse"
-	"github.com/docktermj/go-hello-world-plus/subcommand/helloworld"
+	"github.com/docktermj/domain-socket-tester/common/runner"
+	"github.com/docktermj/domain-socket-tester/subcommand/socket"
 	"github.com/docopt/docopt-go"
 )
 
@@ -21,16 +20,15 @@ var buildIteration string = "0"
 func main() {
 	usage := `
 Usage:
-    go-hello-world-plus [--version] [--help] <command> [<args>...]
+    domain-socket-tester [--version] [--help] <command> [<args>...]
 
 Options:
    -h, --help
 
 The go-hello-world-plus commands are:
-   hello-universe   Hello, Universe!
-   hello-world      Hello, World!   
+   socket   Test a Unix Domain Socket
 
-See 'go-hello-world-plus <command> --help' for more information on a specific command.
+See 'domain-socket-tester <command> --help' for more information on a specific command.
 `
 	// DocOpt processing.
 
@@ -39,7 +37,7 @@ See 'go-hello-world-plus <command> --help' for more information on a specific co
 
 	// Configure output log.
 
-	log.SetFlags(log.Lshortfile | log.Ldate | log.Lmicroseconds | log.LUTC)
+	log.SetFlags(log.Llongfile | log.Ldate | log.Lmicroseconds | log.LUTC)
 
 	// Construct 'argv'.
 
@@ -50,8 +48,7 @@ See 'go-hello-world-plus <command> --help' for more information on a specific co
 	// Reference: http://stackoverflow.com/questions/6769020/go-map-of-functions
 
 	functions := map[string]interface{}{
-		"hello-universe": hellouniverse.Command,
-		"hello-world":    helloworld.Command,
+		"socket": socket.Command,
 	}
 
 	runner.Run(argv, functions, usage)

@@ -1,23 +1,17 @@
-# go-hello-world-plus
+# domain-socket-tester
 
-Build `go-hello-world-plus-M.m.P-I.x86_64.rpm`
-and   `go-hello-world-plus_M.m.P-I_amd64.deb`
+Build `domain-socket-tester-M.m.P-I.x86_64.rpm`
+and   `domain-socket-tester_M.m.P-I_amd64.deb`
 where "M.m.P-I" is Major.minor.Patch-Iteration.
 
 ## Usage
 
-An extension of 
-[go-hello-world](https://github.com/docktermj/go-hello-world)
-that adds the following features:
-
-1. Commandline help
-1. Logging
-1. Sub-command structure
+A program that listens on a Unix Domain Socket
 
 ### Invocation
 
 ```console
-go-hello-world-plus
+domain-socket-tester --socket-file /var/run/xyz.sock
 ```
 
 ## Development
@@ -37,13 +31,13 @@ export PROJECT_DIR=${GOPATH}/src/github.com/docktermj
 ```console
 mkdir -p ${PROJECT_DIR}
 cd ${PROJECT_DIR}
-git clone git@github.com:docktermj/go-hello-world-plus.git
+git clone git@github.com:docktermj/domain-socket-tester.git
 ```
 
 #### Download dependencies
 
 ```console
-cd ${PROJECT_DIR}/go-hello-world
+cd ${PROJECT_DIR}/domain-socket-tester
 make dependencies
 ```
 
@@ -52,7 +46,7 @@ make dependencies
 #### Local build
 
 ```console
-cd ${PROJECT_DIR}/go-hello-world
+cd ${PROJECT_DIR}/domain-socket-tester
 make build-local
 ```
 
@@ -61,7 +55,7 @@ The results will be in the `${GOPATH}/bin` directory.
 #### Docker build
 
 ```console
-cd ${PROJECT_DIR}/go-hello-world
+cd ${PROJECT_DIR}/domain-socket-tester
 make build
 ```
 
@@ -70,7 +64,7 @@ The results will be in the `.../target` directory.
 ### Test
 
 ```console
-cd ${PROJECT_DIR}/go-hello-world
+cd ${PROJECT_DIR}/domain-socket-tester
 make test-local
 ```
 
@@ -85,7 +79,7 @@ Example distributions: openSUSE, Fedora, CentOS, Mandrake
 Example:
 
 ```console
-sudo rpm -ivh go-hello-world-plus-M.m.P-I.x86_64.rpm
+sudo rpm -ivh domain-socket-tester-M.m.P-I.x86_64.rpm
 ```
 
 ##### RPM Update
@@ -93,7 +87,7 @@ sudo rpm -ivh go-hello-world-plus-M.m.P-I.x86_64.rpm
 Example: 
 
 ```console
-sudo rpm -Uvh go-hello-world-plus-M.m.P-I.x86_64.rpm
+sudo rpm -Uvh domain-socket-tester-M.m.P-I.x86_64.rpm
 ```
 
 #### Debian
@@ -105,7 +99,7 @@ Example distributions: Ubuntu
 Example:
 
 ```console
-sudo dpkg -i go-hello-world-plus_M.m.P-I_amd64.deb
+sudo dpkg -i domain-socket-tester_M.m.P-I_amd64.deb
 ```
 
 ### Cleanup
