@@ -1,7 +1,9 @@
 package socket
 
+// Inspirations:
+//  - https://gist.github.com/hakobe/6f70d69b8c5243117787fd488ae7fbf2
+
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -11,17 +13,26 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-func echoServer(c net.Conn) {
+// Read a message from the network and respond.
+func echoServer(networkConnection net.Conn) {
 	for {
-		buf := make([]byte, 512)
-		nr, err := c.Read(buf)
+		byteBuffer := make([]byte, 512)
+		
+		// Read the Unix Domain Socket.
+		
+		numberOfBytesRead, err := networkConnection.Read(byteBuffer)
 		if err != nil {
 			return
 		}
-
-		data := buf[0:nr]
+		data := byteBuffer[0:numberOfBytesRead]
+		
+		// Print what was received over the socket.
+		
 		println("Server got:", string(data))
-		_, err = c.Write(data)
+		
+		// Write a response to the Unix Domain Socket.
+		
+		_, err = networkConnection.Write(data)
 		if err != nil {
 			log.Fatal("Writing client error: ", err)
 		}
@@ -33,7 +44,7 @@ func Command(argv []string) {
 
 	usage := `
 Usage:
-    domain-socket-tester socket [options] 
+    mock-server socket [options] 
 
 Options:
    -h, --help
@@ -44,38 +55,40 @@ Options:
 	// DocOpt processing.
 
 	args, _ := docopt.Parse(usage, nil, true, "", false)
-	socketFile := args["--socket-file"]
-	isDebug := args["--debug"]
+	socketFile := args["--socket-file"].(string)
+	isDebug := args["--debug"].(bool)
 
 	// Listen on the Unix Domain Socket
 
 	if isDebug {
-		log.Printf("Starting echo server on ", socketFile)
+		log.Printf("Starting echo server on %s", socketFile)
 	}
 
-	ln, err := net.Listen("unix", socketFile)
+	listener, err := net.Listen("unix", socketFile)
 	if err != nil {
 		log.Fatal("Listen error: ", err)
 	}
 
-	//
+	// Configure listener to exit when program ends.
 
 	sigc := make(chan os.Signal, 1)
 	signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
-	go func(ln net.Listener, c chan os.Signal) {
+	go func(listener net.Listener, c chan os.Signal) {
 		sig := <-c
 		log.Printf("Caught signal %s: shutting down.", sig)
-		ln.Close()
+		listener.Close()
 		os.Exit(0)
-	}(ln, sigc)
+	}(listener, sigc)
 
+
+    // Read and Echo loop.
+    
 	for {
-		fd, err := ln.Accept()
+		networkConnection, err := listener.Accept()
 		if err != nil {
 			log.Fatal("Accept error: ", err)
 		}
-
-		go echoServer(fd)
+		go echoServer(networkConnection)
 	}
 
 }

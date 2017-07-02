@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/docktermj/domain-socket-tester/common/runner"
-	"github.com/docktermj/domain-socket-tester/subcommand/socket"
+	"github.com/docktermj/mock-server/common/runner"
+	"github.com/docktermj/mock-server/subcommand/socket"
 	"github.com/docopt/docopt-go"
 )
 
@@ -20,12 +20,12 @@ var buildIteration string = "0"
 func main() {
 	usage := `
 Usage:
-    domain-socket-tester [--version] [--help] <command> [<args>...]
+    mock-server [--version] [--help] <command> [<args>...]
 
 Options:
    -h, --help
 
-The go-hello-world-plus commands are:
+The mock-server commands are:
    socket   Test a Unix Domain Socket
 
 See 'domain-socket-tester <command> --help' for more information on a specific command.
