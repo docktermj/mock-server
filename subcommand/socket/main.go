@@ -17,21 +17,21 @@ import (
 func echoServer(networkConnection net.Conn) {
 	for {
 		byteBuffer := make([]byte, 512)
-		
+
 		// Read the Unix Domain Socket.
-		
+
 		numberOfBytesRead, err := networkConnection.Read(byteBuffer)
 		if err != nil {
 			return
 		}
 		data := byteBuffer[0:numberOfBytesRead]
-		
+
 		// Print what was received over the socket.
-		
+
 		println("Server got:", string(data))
-		
+
 		// Write a response to the Unix Domain Socket.
-		
+
 		_, err = networkConnection.Write(data)
 		if err != nil {
 			log.Fatal("Writing client error: ", err)
@@ -80,9 +80,8 @@ Options:
 		os.Exit(0)
 	}(listener, sigc)
 
+	// Read and Echo loop.
 
-    // Read and Echo loop.
-    
 	for {
 		networkConnection, err := listener.Accept()
 		if err != nil {
@@ -90,5 +89,4 @@ Options:
 		}
 		go echoServer(networkConnection)
 	}
-
 }
