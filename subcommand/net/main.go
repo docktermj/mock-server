@@ -1,4 +1,4 @@
-package socket
+package net
 
 // Inspirations:
 //  - https://gist.github.com/hakobe/6f70d69b8c5243117787fd488ae7fbf2
@@ -50,12 +50,17 @@ func Command(argv []string) {
 
 	usage := `
 Usage:
-    mock-server socket [options] 
+    mock-server net [options]
 
 Options:
    -h, --help
-   --socket-file=<file>        Socket file
-   --debug               Log debugging messages
+   --network=<network_type>  Type of network used for communication
+   --address=<address>       Address for network_type. Example (unix) /tmp/tmp.sock
+   --debug                   Log debugging messages
+
+Where:
+   network_type   Examples: 'unix', 'tcp'
+   address        Examples: '/tmp/test.sock', '127.0.0.1:12345'
 `
 
 	// DocOpt processing.
@@ -67,7 +72,11 @@ Options:
 	message := ""
 
 	if args["--network"] == nil {
-		message += "Missing '--socket-file' parameter;"
+		message += "Missing '--network' parameter;"
+	}
+
+	if args["--address"] == nil {
+		message += "Missing '--address' parameter;"
 	}
 
 	if len(message) > 0 {
@@ -78,16 +87,17 @@ Options:
 
 	// Get commandline options.
 
-	socketFile := args["--socket-file"].(string)
+	network := args["--network"].(string)
+	address := args["--address"].(string)
 	isDebug := args["--debug"].(bool)
 
-	// Listen on the Unix Domain Socket.
+	// Listen on the network connection.
 
 	if isDebug {
-		log.Printf("Starting echo server on %s", socketFile)
+		log.Printf("Starting echo server on '%s' network with address '%s'", network, address)
 	}
 
-	listener, err := net.Listen("unix", socketFile)
+	listener, err := net.Listen(network, address)
 	if err != nil {
 		log.Fatal("Listen error: ", err)
 	}

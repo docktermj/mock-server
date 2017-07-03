@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/docktermj/mock-server/common/runner"
+	"github.com/docktermj/mock-server/subcommand/net"
 	"github.com/docktermj/mock-server/subcommand/socket"
 	"github.com/docopt/docopt-go"
 )
@@ -26,9 +27,10 @@ Options:
    -h, --help
 
 The mock-server commands are:
+   net      Test a variety of networks
    socket   Test a Unix Domain Socket
 
-See 'domain-socket-tester <command> --help' for more information on a specific command.
+See 'mock-server <command> --help' for more information on a specific command.
 `
 	// DocOpt processing.
 
@@ -48,6 +50,7 @@ See 'domain-socket-tester <command> --help' for more information on a specific c
 	// Reference: http://stackoverflow.com/questions/6769020/go-map-of-functions
 
 	functions := map[string]interface{}{
+		"net":    net.Command,
 		"socket": socket.Command,
 	}
 
