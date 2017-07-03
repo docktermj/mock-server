@@ -21,22 +21,21 @@ func echoServer(networkConnection net.Conn) {
 	for {
 		byteBuffer := make([]byte, 512)
 
-		// Read the Unix Domain Socket.
+		// Read from network connection.
 
 		numberOfBytesRead, err := networkConnection.Read(byteBuffer)
 		if err != nil {
 			return
 		}
-		data := byteBuffer[0:numberOfBytesRead]
+		inboundMessage := byteBuffer[0:numberOfBytesRead]
 
-		// Print what was received over the socket.
+		// Print messages.
 
-		fmt.Println(">>>", string(data))
-
-		// Write a response to the Unix Domain Socket.
-
-		outboundMessage := fmt.Sprintf("Server says \"%s\"", data)
+		fmt.Println(">>>", string(inboundMessage))
+		outboundMessage := fmt.Sprintf("Server says \"%s\"", inboundMessage)
 		fmt.Println("<<<", outboundMessage)
+
+		// Write to network connection.
 
 		_, err = networkConnection.Write([]byte(outboundMessage))
 		if err != nil {
@@ -66,7 +65,7 @@ Options:
 
 	message := ""
 
-	if args["--network"] == nil {
+	if args["--socket-file"] == nil {
 		message += "Missing '--socket-file' parameter;"
 	}
 
@@ -81,11 +80,13 @@ Options:
 	socketFile := args["--socket-file"].(string)
 	isDebug := args["--debug"].(bool)
 
-	// Listen on the Unix Domain Socket.
+	// Debugging information.
 
 	if isDebug {
-		log.Printf("Starting echo server on %s", socketFile)
+		log.Printf("Starting echo server on '%s' network with address '%s'", "unix", socketFile)
 	}
+
+	// Listen on the network connection.
 
 	listener, err := net.Listen("unix", socketFile)
 	if err != nil {
