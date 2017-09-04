@@ -6,18 +6,40 @@ package socket
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/docktermj/mock-server/common/help"
 	"github.com/docopt/docopt-go"
 )
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+// Return a pseudo-random string of given length.
+func randStringRunes(length int) string {
+	b := make([]rune, length)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
+}
+
+// Append a pseudo-unique character string to the prefix.
+func getServerId() string {
+	return randStringRunes(6)
+}
+
 // Read a message from the network and respond.
-func echoServer(networkConnection net.Conn) {
+func echoServer(serverId string, networkConnection net.Conn) {
 	for {
 		byteBuffer := make([]byte, 512)
 
@@ -31,9 +53,9 @@ func echoServer(networkConnection net.Conn) {
 
 		// Print messages.
 
-		fmt.Println(">>>", string(inboundMessage))
-		outboundMessage := fmt.Sprintf("Server says \"%s\"", inboundMessage)
-		fmt.Println("<<<", outboundMessage)
+		fmt.Printf("Receive: %s\n", string(inboundMessage))
+		outboundMessage := fmt.Sprintf("Server-%s responds by echoing: \"%s\"", serverId, inboundMessage)
+		fmt.Printf("Respond: %s\n\n", outboundMessage)
 
 		// Write to network connection.
 
@@ -106,11 +128,12 @@ Options:
 
 	// Read and Echo loop.
 
+	serverId := getServerId()
 	for {
 		networkConnection, err := listener.Accept()
 		if err != nil {
 			log.Fatal("Accept error: ", err)
 		}
-		go echoServer(networkConnection)
+		go echoServer(serverId, networkConnection)
 	}
 }
